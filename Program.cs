@@ -27,6 +27,11 @@ Console.WriteLine("{" + string.Join(",", withdrawResult) + "}");
 Dictionary<String, String> detailResult = gatewaySdk.detail("10854", 1);
 Console.WriteLine("{" + string.Join(",", detailResult) + "}");
 
+// Here is an example of a balance
+// return balance result: code=1,message=,data={...}
+Dictionary<String, String> balanceResult = gatewaySdk.balance();
+Console.WriteLine("{" + string.Join(",", balanceResult) + "}");
+
 // Decrypt the encrypted information in the callback
 String jsonstr = gatewaySdk.symDecrypt("encryptedData .........");
 Console.WriteLine("{" + string.Join(",", jsonstr) + "}");
