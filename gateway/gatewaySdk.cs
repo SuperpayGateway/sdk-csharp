@@ -236,6 +236,60 @@
         }
 
         /// <summary>
+        /// Get active pay-in payment codes
+        /// </summary>
+        /// <returns>code,message,data</returns>
+        public static Dictionary<String, String> getPayinPaymentCodes()
+        {
+            return getPaymentCodes("getPayinPaymentCodes");
+        }
+
+        /// <summary>
+        /// Get active payout payment codes
+        /// </summary>
+        /// <returns>code,message,data</returns>
+        public static Dictionary<String, String> getPayoutPaymentCodes()
+        {
+            return getPaymentCodes("getPayoutPaymentCodes");
+        }
+
+        private static Dictionary<String, String> getPaymentCodes(String endpoint)
+        {
+            Dictionary<String, String> result = new Dictionary<String, String>();
+            try
+            {
+                String token = getToken();
+                if (String.IsNullOrEmpty(token)) return result;
+                String requestUrl = "gateway/" + gatewayCfg.VERSION_NO + "/" + endpoint;
+                Dictionary<String, String> cnst = generateConstant(requestUrl);
+                String bodyJson = "{}";
+                String base64ReqBody = sortedAfterToBased64(bodyJson);
+                String signature = createSignature(cnst, base64ReqBody);
+                String encryptData = symEncrypt(base64ReqBody);
+                String json = "{\"data\":\"" + encryptData + "\"}";
+                String[] keys = new String[] { "code", "message", "encryptedData" };
+                Dictionary<String, String> dict = post(requestUrl, token, signature, json, cnst["nonceStr"], cnst["timestamp"], keys);
+                if (!String.IsNullOrEmpty(dict["code"]) && dict["code"] == "1" && !String.IsNullOrEmpty(dict["encryptedData"]))
+                {
+                    result.Add("code", "1");
+                    result.Add("message", "");
+                    result.Add("data", symDecrypt(dict["encryptedData"]));
+                    return result;
+                }
+                result.Add("code", "0");
+                result.Add("message", dict["message"]);
+                return result;
+            }
+            catch (Exception e)
+            {
+                result = new Dictionary<String, String>();
+                result.Add("code", "0");
+                result.Add("message", e.Message);
+                return result;
+            }
+        }
+
+        /// <summary>
         /// get server token
         /// </summary>
         /// <returns>token</returns>

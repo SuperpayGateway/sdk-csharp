@@ -32,6 +32,13 @@ Console.WriteLine("{" + string.Join(",", detailResult) + "}");
 Dictionary<String, String> balanceResult = gatewaySdk.balance();
 Console.WriteLine("{" + string.Join(",", balanceResult) + "}");
 
+// Get active pay-in and payout codes configured for this merchant
+Dictionary<String, String> payinPaymentCodes = gatewaySdk.getPayinPaymentCodes();
+Console.WriteLine("{" + string.Join(",", payinPaymentCodes) + "}");
+
+Dictionary<String, String> payoutPaymentCodes = gatewaySdk.getPayoutPaymentCodes();
+Console.WriteLine("{" + string.Join(",", payoutPaymentCodes) + "}");
+
 // Decrypt the encrypted information in the callback
 String jsonstr = gatewaySdk.symDecrypt("encryptedData .........");
 Console.WriteLine("{" + string.Join(",", jsonstr) + "}");
